@@ -1,0 +1,237 @@
+style.
+  /* ========== RESET ========== */
+  img {
+    border: none;
+    -ms-interpolation-mode: bicubic;
+    max-width: 100%;
+  }
+  body {
+    background-color: #f4f7f6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  table {
+    border-collapse: separate;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    width: 100%;
+  }
+  table td {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    vertical-align: top;
+  }
+
+  /* ========== LAYOUT ========== */
+  .body {
+    background-color: #f4f7f6;
+    width: 100%;
+  }
+  .container {
+    display: block;
+    margin: 0 auto !important;
+    max-width: 580px;
+    padding: 20px;
+    width: 580px;
+  }
+  .content {
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto;
+    max-width: 580px;
+    padding: 10px;
+  }
+  .main {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  .wrapper {
+    box-sizing: border-box;
+    padding: 40px 35px;
+  }
+
+  /* ========== HEADER ========== */
+  .header {
+    background: #f8f9fa;
+    padding: 30px 35px;
+    text-align: center;
+    border-bottom: 3px solid #55c57a;
+  }
+  .header h1 {
+    color: #1a2b3c;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 10px 0 0 0;
+    letter-spacing: 0.5px;
+  }
+  .header p {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+  }
+
+  /* ========== FOOTER ========== */
+  .footer {
+    clear: both;
+    margin-top: 0;
+    text-align: center;
+    width: 100%;
+    background-color: #f8faf9;
+    padding: 25px 35px;
+    border-top: 1px solid #e9edec;
+  }
+  .footer td,
+  .footer p,
+  .footer span,
+  .footer a {
+    color: #8899a6;
+    font-size: 13px;
+    text-align: center;
+  }
+  .footer a {
+    color: #55c57a;
+    text-decoration: none;
+  }
+
+  /* ========== TYPOGRAPHY ========== */
+  p, ul, ol {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0 0 18px 0;
+    color: #2d3748;
+    line-height: 1.7;
+  }
+  a {
+    color: #55c57a;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* ========== BUTTONS ========== */
+  .btn {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 25px 0 10px 0;
+  }
+  .btn table {
+    width: auto;
+  }
+  .btn table td {
+    background-color: #ffffff;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .btn a {
+    background-color: #55c57a;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #ffffff !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 32px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(85, 197, 122, 0.3);
+  }
+  .btn a:hover {
+    background-color: #2d8f4e !important;
+    text-decoration: none !important;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media only screen and (max-width: 620px) {
+    table[class=body] .container {
+      padding: 10px !important;
+      width: 100% !important;
+    }
+    table[class=body] .content {
+      padding: 0 !important;
+    }
+    table[class=body] .wrapper {
+      padding: 20px !important;
+    }
+    table[class=body] .header {
+      padding: 20px !important;
+    }
+    table[class=body] .header h1 {
+      font-size: 22px !important;
+    }
+    table[class=body] .header p {
+      font-size: 13px !important;
+    }
+    table[class=body] .footer {
+      padding: 15px 20px !important;
+    }
+    table[class=body] .footer td,
+    table[class=body] .footer p,
+    table[class=body] .footer span,
+    table[class=body] .footer a {
+      font-size: 12px !important;
+    }
+    table[class=body] p,
+    table[class=body] ul,
+    table[class=body] ol,
+    table[class=body] td,
+    table[class=body] span,
+    table[class=body] a {
+      font-size: 15px !important;
+    }
+    table[class=body] .btn table {
+      width: 100% !important;
+    }
+    table[class=body] .btn a {
+      width: 100% !important;
+      padding: 14px 20px !important;
+      text-align: center;
+      font-size: 15px !important;
+    }
+    table[class=body] .main {
+      border-radius: 8px !important;
+    }
+    table[class=body] img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    table[class=body] .img-responsive {
+      height: auto !important;
+      max-width: 100% !important;
+      width: auto !important;
+    }
+  }
+
+  /* ========== OUTLOOK FIXES ========== */
+  @media all {
+    .ExternalClass {
+      width: 100%;
+    }
+    .ExternalClass,
+    .ExternalClass p,
+    .ExternalClass span,
+    .ExternalClass font,
+    .ExternalClass td,
+    .ExternalClass div {
+      line-height: 100%;
+    }
+    .apple-link a {
+      color: inherit !important;
+      font-family: inherit !important;
+      font-size: inherit !important;
+      font-weight: inherit !important;
+      line-height: inherit !important;
+      text-decoration: none !important;
+    }
+  }
