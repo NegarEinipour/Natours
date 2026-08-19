@@ -8,13 +8,21 @@ const User = require("./../../models/usersModel");
 dotenv.config({ path: "./config.env" });
 
 //.........DATABASE CONNECTION
-// ✅ Pass the connection string from your .env file
+
+// DATABASE CONNECTION — Atlas
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD,
+);
+
+// Pass the connection string from your .env file
 mongoose
-  .connect(process.env.DATABASE_LOCAL)
+  // .connect(process.env.DATABASE_LOCAL)
+  .connect(DB)
   // .then((con) => {
   .then(() => {
     // console.log('con.connections', con.connections);
-    console.log("✅ Database connected successfully!");
+    console.log("✨ Atlas Database connected successfully!");
   })
   .catch((err) => {
     console.error("❌ Database connection error:", err);

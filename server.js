@@ -11,39 +11,32 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
 
-//.........DATABASE CONNECTION
-// ✅ Pass the connection string from your .env file
+//.........ATLAS DATABASE CONNECTION
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD,
+);
+
 mongoose
-  .connect(process.env.DATABASE_LOCAL)
-  // .then((con) => {
+  .connect(DB)
   .then(() => {
-    // console.log('con.connections', con.connections);
-    console.log("✅ Database connected successfully!");
+    console.log("ATLAS DATABASE CONNECETED ✨✨");
   })
   .catch((err) => {
-    console.error("❌ Database connection error:", err);
+    console.error(" Database connection error: ❌", err);
   });
 
-// const tourSchema = new mongoose.Schema({
-//   name: {
-//     type: String,
-//     required: [true, 'A tour must have a name'],
-//     unique: true,
-//   },
-//   price: {
-//     type: Number,
-//     required: [true, 'A tour must have a price'],
-//   },
-//   rating: {
-//     type: Number,
-//     default: 4.5,
-//   },
-// });
-
-// const Tour = mongoose.model('Tour', tourSchema);
-
-// console.log('express env:', app.get('env'));
-// console.log('nodejs env:', process.env);
+//.......LOCAL DATA BASE CONNECTION
+// mongoose
+//   .connect(process.env.DATABASE_LOCAL)
+//   // .then((con) => {
+//   .then(() => {
+//     // console.log('con.connections', con.connections);
+//     console.log("Local Database connected successfully! 🎉");
+//   })
+//   .catch((err) => {
+//     console.error(" Database connection error: ❌", err);
+//   });
 
 // ✅ ONLY log the variables you care about:
 console.log("🟢 Node.js env:");
