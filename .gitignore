@@ -6,4 +6,6 @@ atlas-credentials.env
 .DS_Store
 .vscode/
 .idea/ 
+.cache/ 
+.parcel-cache/  
  
