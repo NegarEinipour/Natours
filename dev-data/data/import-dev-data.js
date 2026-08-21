@@ -7,38 +7,29 @@ const User = require("./../../models/usersModel");
 
 dotenv.config({ path: "./config.env" });
 
-//.........DATABASE CONNECTION
-
 // DATABASE CONNECTION — Atlas
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
   process.env.DATABASE_PASSWORD,
 );
 
-// Pass the connection string from your .env file
 mongoose
-  // .connect(process.env.DATABASE_LOCAL)
   .connect(DB)
-  // .then((con) => {
   .then(() => {
-    // console.log('con.connections', con.connections);
     console.log("✨ Atlas Database connected successfully!");
   })
   .catch((err) => {
     console.error("❌ Database connection error:", err);
   });
 
-//.............READ THE JSON FILE
-const tours = JSON.parse(
-  // fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8"),
-  fs.readFileSync(`${__dirname}/tours.json`, "utf-8"),
-);
+// READ JSON FILES
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
 const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, "utf-8"));
 const reviews = JSON.parse(
   fs.readFileSync(`${__dirname}/reviews.json`, "utf-8"),
 );
 
-//.............IMPORT DATA INTO THE DATABASE
+// IMPORT DATA
 const importData = async () => {
   try {
     await Tour.create(tours);
@@ -51,8 +42,7 @@ const importData = async () => {
   }
 };
 
-//.............DELETE ALL THE DATA FROM THE COLLECTION
-
+// DELETE ALL DATA
 const deleteData = async () => {
   try {
     await Tour.deleteMany();
@@ -65,9 +55,9 @@ const deleteData = async () => {
   }
 };
 
+// RUN
 if (process.argv[2] === "--import") {
   importData();
 } else if (process.argv[2] === "--delete") {
   deleteData();
 }
-// console.log(process.argv);

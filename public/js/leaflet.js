@@ -21,11 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const [lng, lat] = locations[0].coordinates;
 
-  // 🚫 CREATE MAP WITHOUT ZOOM CONTROLS
   const map = L.map("map", {
-    zoomControl: false, // ← Removes + and - buttons
-    scrollWheelZoom: false, // ← Disables scroll zoom (optional)
-    doubleClickZoom: true, // ← Disables double-click zoom (optional)
+    zoomControl: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: true,
   }).setView([lat, lng], 10);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
     className: "bw-map",
   }).addTo(map);
 
-  // Custom green marker
   const greenIcon = L.divIcon({
     className: "custom-marker",
     html: `<div style="
@@ -55,21 +53,20 @@ document.addEventListener("DOMContentLoaded", function () {
     iconAnchor: [15, 30],
   });
 
-  // ✅ Add markers with PERMANENT tooltips (labels)
   locations.forEach(function (location) {
     const [lng, lat] = location.coordinates;
 
-    const marker = L.marker([lat, lng], { icon: greenIcon })
+    L.marker([lat, lng], { icon: greenIcon })
       .addTo(map)
       .bindTooltip(
         `
-        <strong> Day ${location.day}</strong><br>
+        <strong>Day ${location.day}</strong><br>
         ${location.description || location.address || "Tour location"}
       `,
         {
-          permanent: true, // ← Always visible
-          direction: "top", // ← Above the marker
-          offset: [0, -10], // ← Slight offset
+          permanent: true,
+          direction: "top",
+          offset: [0, -10],
           className: "custom-tooltip",
         },
       );

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify").default || require("slugify");
-const User = require("./usersModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -9,9 +8,8 @@ const tourSchema = new mongoose.Schema(
       required: [true, "A tour must have a name"],
       unique: true,
       trim: true,
-      maxLength: [40, "A TOUR MUST HAVE LESS OR EQUAL THAN 40 CHARACTERS "],
-      minLength: [10, "A TOUR MUST HAVE MORE OR EQUAL THAN 10 CHARACTERS "],
-      // validate: [validator.isAlpha, "TOUR NAME MUST ONLY CONTAIN CHARACTORS"],
+      maxLength: [40, "A tour name must be 40 characters or less"],
+      minLength: [10, "A tour name must be 10 characters or more"],
     },
     slug: String,
     duration: {
@@ -27,7 +25,7 @@ const tourSchema = new mongoose.Schema(
       required: [true, "A tour must have a difficulty"],
       enum: {
         values: ["easy", "medium", "difficult"],
-        message: "difficulty is either: easy, medium or difficult",
+        message: "Difficulty must be: easy, medium, or difficult",
       },
     },
     ratingsAverage: {
@@ -45,17 +43,13 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, "A tour must have a price"],
     },
-    // priceDiscount: Number,
     priceDiscount: {
       type: Number,
-      // validate: function (val) {
-      //   return val < this.price;
-      // },
       validate: {
-        message: "discount price ({VALUE}) should be below the regular price",
         validator: function (val) {
           return val < this.price;
         },
+        message: "Discount price ({VALUE}) must be below regular price",
       },
     },
     summary: {
@@ -80,7 +74,7 @@ const tourSchema = new mongoose.Schema(
     startDates: [Date],
     secretTour: {
       type: Boolean,
-      default: false, //usually tours are not secret
+      default: false,
     },
     startLocation: {
       type: {
@@ -105,73 +99,48 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    // In tourModel.js
     guides: [
       {
-        type: mongoose.Schema.ObjectId, // I expect the type of the each elements in the guides array to be the mongodb id
+        type: mongoose.Schema.ObjectId,
         ref: "User",
       },
     ],
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }, // ✅ Also good to include
+    toObject: { virtuals: true },
   },
 );
 
-// tourSchema.index({ price: 1 });
+// INDEXES
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: "2dsphere" });
 
-//................DOCUMENT MIDDLEWARE
-tourSchema.pre("save", async function () {
+// DOCUMENT MIDDLEWARE — Create Slug
+tourSchema.pre("save", function () {
   this.slug = slugify(this.name, { lower: true });
-  console.log("🎃SLUG:", this.slug);
-  // next();?
 });
-// tourSchema.pre("save", async function () {
-//   console.log("WE WILL SEE DOCUMENTS");
-// });
 
-// tourSchema.post("save", function (doc, next) {
-//   console.log(`✅ Tour "${doc.name}" was saved!`);
-//   next();
-// });
-
-//...............QUERY MIDDLEWARE
-// tourSchema.pre("find", function () {
+// QUERY MIDDLEWARE — Exclude Secret Tours
 tourSchema.pre(/^find/, function (next) {
-  //all the commands that start with find
   this.find({ secretTour: { $ne: true } });
-  // next();
 });
 
-//...............QUERY MIDDLEWAREs
-tourSchema.pre(/^find/, function (docs, next) {
+// QUERY MIDDLEWARE — Populate Guides
+tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: "guides",
-    select: "-password -__v", // ← Exclude password and __v
+    select: "-password -__v",
   });
-  // next();
 });
 
-tourSchema.post(/^find/, function (docs, next) {
-  // console.log(docs);
-  next();
-});
-
-//...............AGGREGATION MIDDLEWARE
-// tourSchema.pre("aggregate", function (next) {
-//   // console.log("....🎉....aggregate:", this); //Gets the current aggregation pipeline array
-//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-// });
-
+// VIRTUAL — Duration in Weeks
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
 
-//.............VIRTUAL POPULATE
+// VIRTUAL POPULATE — Reviews
 tourSchema.virtual("reviews", {
   ref: "Review",
   foreignField: "tour",

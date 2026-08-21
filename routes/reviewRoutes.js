@@ -6,9 +6,7 @@ const bookingController = require("../controllers/fakeBookingController");
 
 const router = express.Router({ mergeParams: true });
 
-// ==============================================
 // PROTECTED ROUTES (Authentication required)
-// ==============================================
 router.use(authController.protect);
 
 router.route("/").get(reviewController.getAllReviews).post(

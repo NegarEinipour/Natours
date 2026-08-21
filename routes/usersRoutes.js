@@ -1,31 +1,24 @@
 const express = require("express");
-// const multer = require("multer");
-const userController = require("./../controllers/userController");
-const authController = require("./../controllers/authController");
+const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 
-// const upload = multer({ dest: "public/img/users" });
 const router = express.Router();
 
-// ==============================================
 // PUBLIC ROUTES (No authentication required)
-// ==============================================
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.get("/logout", authController.logout);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
 
-// ==============================================
 // PROTECTED ROUTES (Authentication required)
-// ==============================================
-router.use(authController.protect); // ✅ All routes below are protected
+router.use(authController.protect);
 
 // Update password
 router.patch("/updatePassword", authController.updatePassword);
 
 // Self-management
 router.get("/me", userController.getMe, userController.getUser);
-// router.patch("/updateMe", upload.single("photo"), userController.updateMe);
 router.patch(
   "/updateMe",
   userController.uploadUserPhoto,
@@ -34,12 +27,9 @@ router.patch(
 );
 router.delete("/deleteMe", userController.deleteMe);
 
-// ==============================================
 // ADMIN ROUTES (Authentication + Authorization)
-// ==============================================
-router.use(authController.restrictTo("admin")); // ✅ Only admins can access below
+router.use(authController.restrictTo("admin"));
 
-// Admin user management
 router
   .route("/")
   .get(userController.getAllUsers)
@@ -49,11 +39,6 @@ router
   .route("/:id")
   .get(userController.getUser)
   .patch(userController.updateUser)
-  .delete(
-    // authController.protect is already applied via router.use()
-    // authController.restrictTo("admin", "lead-guide") is already applied
-    // ✅ You can just use the controller directly
-    userController.deleteUser,
-  );
+  .delete(userController.deleteUser);
 
 module.exports = router;

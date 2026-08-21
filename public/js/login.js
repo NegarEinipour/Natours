@@ -1,11 +1,5 @@
-// public/js/login.js
-// console.log("login.js loaded!");
-
-// Login function
+// LOGIN FUNCTION
 const login = async (email, password) => {
-  console.log("📧 Sending email:", email);
-  console.log("🔑 Sending password:", password);
-
   try {
     const response = await axios({
       method: "POST",
@@ -21,16 +15,13 @@ const login = async (email, password) => {
       }, 1500);
     }
   } catch (error) {
-    // console.error("❌ Login error:", error.response);
     const message = error.response?.data?.message || "Login failed.";
-    showAlert("error", `${message}`);
+    showAlert("error", message);
   }
 };
 
-// Logout function
+// LOGOUT FUNCTION
 const logout = async () => {
-  console.log("🔍 Logout called!");
-
   try {
     const response = await axios({
       method: "GET",
@@ -45,15 +36,12 @@ const logout = async () => {
       }, 1500);
     }
   } catch (error) {
-    // console.error("❌ Logout error:", error);
     showAlert("error", "Logout failed!");
   }
 };
 
-// DOM events
+// DOM EVENTS
 document.addEventListener("DOMContentLoaded", function () {
-  // console.log("DOM loaded!");
-
   // Login form
   const form = document.querySelector(".form--login");
   if (form) {
@@ -67,11 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Logout button
   const logoutBtn = document.querySelector(".nav__el--logout");
-  console.log("🔍 Logout button:", logoutBtn);
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      // console.log("Logout clicked!");
       logout();
     });
   }
