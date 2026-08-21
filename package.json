@@ -4,9 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "start:prod": "set NODE_ENV=production&& nodemon server.js",
-    "watch:js": "parcel watch ./src/js/index.js --dist-dir ./public/js",
-    "build:js": "parcel build ./src/js/index.js --dist-dir ./public/js"
+    "start:prod": "set NODE_ENV=production&& nodemon server.js"
   },
   "author": "negar eini",
   "license": "ISC",
@@ -45,8 +43,6 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-react": "^7.37.5",
-    "nodemon": "^3.1.14",
-    "parcel": "^2.16.4",
-    "parcel-bundler": "^1.12.5"
+    "nodemon": "^3.1.14"
   }
 }

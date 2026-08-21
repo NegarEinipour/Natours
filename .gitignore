@@ -1,1 +1,9 @@
-"config.env" 
+config.env
+node_modules/
+*.env
+atlas-credentials.env
+*.log
+.DS_Store
+.vscode/
+.idea/ 
+ 
