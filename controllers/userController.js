@@ -2,25 +2,12 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const User = require("./../models/usersModel");
 const factory = require("./handlerFactory");
-
-const multer = require("multer"); //requiring the multer package
+const multer = require("multer");
 const sharp = require("sharp");
 
-// 1. Storage configuration / a definition of how I want to store my files
-// const multerStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "public/img/users");
-//   },
-//   filename: (req, file, cb) => {
-//     // Create unique filename: user-1234567890.jpeg
-//     const ext = file.mimetype.split("/")[1]; //extention
-//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-//   },
-// });
+// MULTER CONFIGURATION
+const multerStorage = multer.memoryStorage();
 
-const multerStorage = multer.memoryStorage(); //this way image will be stored as buffer
-
-// 2. File filter (only images)
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -29,8 +16,6 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-//use storage and filter to create the upload
-// const upload = multer({ dest: "public/img/users" });
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
@@ -38,6 +23,7 @@ const upload = multer({
 
 exports.uploadUserPhoto = upload.single("photo");
 
+// RESIZE USER PHOTO
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -52,26 +38,20 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
-// exports.createUser = (req, res) => {
-//   res.status(500).json({
-//     status: "error",
-//     message: "This route is not yet defined / please use signup instead ",
-//   });
-// };
-
-// exports.getAllUsers = catchAsync(async (req, res) => {
-//   const users = await User.find();
-//   res.status(500).json({
-//     status: "error",
-//     data: users,
-//   });
-// });
+// FACTORY FUNCTIONS
 exports.createUser = factory.createOne(User);
 exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
+// GET ME (Middleware)
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
+// UPDATE ME
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -82,15 +62,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
-};
-
 exports.updateMe = catchAsync(async (req, res, next) => {
-  // console.log("........req.file:", req.file);
-
-  //1. create an erro if the user wants to update the password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError("This route is not for password updates", 400));
   }
@@ -98,10 +70,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, "name", "email");
   if (req.file) filteredBody.photo = req.file.filename;
 
-  //2. Update the user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true, // Return the updated document
-    runValidators: true, // Run schema validation
+    new: true,
+    runValidators: true,
   });
 
   res.status(200).json({
@@ -112,6 +83,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// DELETE ME (Soft Delete)
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 

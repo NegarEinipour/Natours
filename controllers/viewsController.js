@@ -1,15 +1,12 @@
 const Tour = require("../models/tourModel");
 const User = require("../models/usersModel");
-const Bookings = require("../models/fakeBookingModel");
+const Booking = require("../models/fakeBookingModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
+// OVERVIEW PAGE
 exports.getOverview = catchAsync(async (req, res, next) => {
-  //1. GET ALL THE TOUR DATA FROM COLLECTION
   const tours = await Tour.find();
-  //2. BUILD TEMPLATE
-
-  //3. RENDER THAT TEMPLATE USING THE TOUR DATA FROM 1
 
   res.status(200).render("overview", {
     title: "All Tours",
@@ -17,15 +14,14 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
+// TOUR DETAIL PAGE
 exports.getTour = catchAsync(async (req, res, next) => {
-  //1. GET THE DATA FOR THE REQUESTED TOUR (INCLUDING REVIEWS AND GUIDES)
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
-    //You're using populate to replace the reviews IDs with the actual review documents from the database.
     path: "reviews",
     select: "review rating user",
     populate: {
       path: "user",
-      select: "name photo", // ← This gets the user data!
+      select: "name photo",
     },
   });
 
@@ -33,34 +29,34 @@ exports.getTour = catchAsync(async (req, res, next) => {
     return next(new AppError("There is no tour with that name.", 404));
   }
 
-  //2. BUILD THE TEMPLATE
-
-  //3. RENDER THE DATA FROM 1
   res.status(200).render("tour", {
     title: `${tour.name} Tour`,
     tour,
   });
 });
 
-exports.getLoginForm = catchAsync(async (req, res) => {
+// LOGIN PAGE
+exports.getLoginForm = (req, res) => {
   res.status(200).render("login", {
     title: "Log into your account",
   });
-});
+};
 
-// controllers/viewsController.js
+// SIGNUP PAGE
 exports.getSignupForm = (req, res) => {
   res.status(200).render("signup", {
     title: "Create your account",
   });
 };
 
+// ACCOUNT PAGE
 exports.getAccount = (req, res) => {
   res.status(200).render("account", {
     title: "Your account",
   });
 };
 
+// UPDATE USER DATA (Form submission)
 exports.updateUserData = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
@@ -73,23 +69,19 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
       runValidators: true,
     },
   );
+
   res.status(200).render("account", {
     title: "Your account",
     user: updatedUser,
   });
 });
 
+// MY TOURS (Bookings)
 exports.getMyTours = catchAsync(async (req, res, next) => {
-  // 1) Find all bookings for the current user
-  const bookings = await Bookings.find({ user: req.user.id });
-
-  // 2) Extract tour IDs from the bookings
+  const bookings = await Booking.find({ user: req.user.id });
   const tourIDs = bookings.map((booking) => booking.tour);
-
-  // 3) Find all tours with those IDs
   const tours = await Tour.find({ _id: { $in: tourIDs } });
 
-  // 4) Render the page with tours
   res.status(200).render("overview", {
     title: "My Tours",
     tours,

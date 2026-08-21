@@ -4,9 +4,7 @@ const Booking = require("../models/fakeBookingModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
-// =============================================
 // FAKE CHECKOUT SESSION (No real payment)
-// =============================================
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.tourId);
 
@@ -39,9 +37,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   res.redirect("/my-tours");
 });
 
-// =============================================
 // GET MY BOOKINGS
-// =============================================
 exports.getMyBookings = catchAsync(async (req, res, next) => {
   const bookings = await Booking.find({ user: req.user.id })
     .populate("tour", "name slug imageCover price")
@@ -56,9 +52,7 @@ exports.getMyBookings = catchAsync(async (req, res, next) => {
   });
 });
 
-// =============================================
 // GET SINGLE BOOKING
-// =============================================
 exports.getBooking = catchAsync(async (req, res, next) => {
   const booking = await Booking.findById(req.params.id)
     .populate("tour", "name slug imageCover")
@@ -82,9 +76,7 @@ exports.getBooking = catchAsync(async (req, res, next) => {
   });
 });
 
-// =============================================
 // ADMIN: GET ALL BOOKINGS
-// =============================================
 exports.getAllBookings = catchAsync(async (req, res, next) => {
   const bookings = await Booking.find()
     .populate("tour", "name price")
@@ -99,9 +91,7 @@ exports.getAllBookings = catchAsync(async (req, res, next) => {
   });
 });
 
-// =============================================
 // ADMIN: UPDATE BOOKING STATUS
-// =============================================
 exports.updateBookingStatus = catchAsync(async (req, res, next) => {
   const { status } = req.body;
 

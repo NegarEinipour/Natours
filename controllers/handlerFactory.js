@@ -6,7 +6,6 @@ const APIFeatures = require("../utils/apiFeatures");
 // GET ALL
 exports.getAll = (Model) => {
   return catchAsync(async (req, res) => {
-    //to allow for nested GET reviews
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
 
@@ -17,7 +16,8 @@ exports.getAll = (Model) => {
       .paginate();
 
     const doc = await features.query;
-    res.json({
+
+    res.status(200).json({
       status: "success",
       results: doc.length,
       data: {
@@ -38,7 +38,7 @@ exports.getOne = (Model, popOptions) => {
       return next(new AppError("No document found with that ID", 404));
     }
 
-    res.json({
+    res.status(200).json({
       status: "success",
       data: {
         data: doc,
@@ -51,6 +51,7 @@ exports.getOne = (Model, popOptions) => {
 exports.createOne = (Model) => {
   return catchAsync(async (req, res) => {
     const doc = await Model.create(req.body);
+
     res.status(201).json({
       status: "success",
       data: {
@@ -72,7 +73,7 @@ exports.updateOne = (Model) => {
       return next(new AppError("No document found with that ID", 404));
     }
 
-    res.json({
+    res.status(200).json({
       status: "success",
       data: {
         data: doc,
