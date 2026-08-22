@@ -1,29 +1,42 @@
 // public/js/signup.js
-document
-  .querySelector(".form--signup")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+  const signupForm = document.querySelector(".form--signup");
+  const signupBtn = document.getElementById("signup-btn");
 
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const passwordConfirm = document.getElementById("passwordConfirm").value;
+  if (signupForm) {
+    signupForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    try {
-      const response = await axios({
-        method: "POST",
-        url: "/api/v1/users/signup",
-        data: { name, email, password, passwordConfirm },
-        withCredentials: true,
-      });
+      // Show loading state
+      const originalText = signupBtn.textContent;
+      signupBtn.textContent = "Processing...";
+      signupBtn.disabled = true;
 
-      if (response.data.status === "success") {
-        showAlert("success", "Account created successfully!");
-        window.setTimeout(() => {
-          location.assign("/");
-        }, 1500);
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const passwordConfirm = document.getElementById("passwordConfirm").value;
+
+      try {
+        const response = await axios({
+          method: "POST",
+          url: "/api/v1/users/signup",
+          data: { name, email, password, passwordConfirm },
+          withCredentials: true,
+        });
+
+        if (response.data.status === "success") {
+          showAlert("success", "Account created successfully! 🎉");
+          setTimeout(() => {
+            location.assign("/");
+          }, 1500);
+        }
+      } catch (error) {
+        // 🔴 Reset button on error
+        signupBtn.textContent = originalText;
+        signupBtn.disabled = false;
+        showAlert("error", error.response?.data?.message || "Signup failed");
       }
-    } catch (error) {
-      showAlert("error", error.response?.data?.message || "Signup failed");
-    }
-  });
+    });
+  }
+});
