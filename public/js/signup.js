@@ -1,4 +1,5 @@
 // public/js/signup.js
+
 document.addEventListener("DOMContentLoaded", function () {
   const signupForm = document.querySelector(".form--signup");
   const signupBtn = document.getElementById("signup-btn");
@@ -7,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     signupForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      // Show loading state
       const originalText = signupBtn.textContent;
       signupBtn.textContent = "Processing...";
       signupBtn.disabled = true;
@@ -26,17 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (response.data.status === "success") {
-          showAlert("success", "Account created successfully! 🎉");
+          showAlert("success", "Account created successfully!");
           setTimeout(() => {
             location.assign("/");
           }, 1500);
         }
       } catch (error) {
-        // 🔴 Reset button on error
+        console.error("❌ Error:", error.response?.data || error.message);
         signupBtn.textContent = originalText;
         signupBtn.disabled = false;
         showAlert("error", error.response?.data?.message || "Signup failed");
       }
     });
+  } else {
+    console.error("❌ Form NOT found!");
   }
 });
