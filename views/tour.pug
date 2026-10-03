@@ -109,9 +109,7 @@ block content
       //-  Correct: Same level as the paragraph (not indented under it)
       if user
         a.btn.btn--green.span-all-rows#book-tour(
-          data-tour-id=`${tour.id}`
-          href=`/api/v1/bookings/checkout-session/${tour.id}`
-        )
+          data-tour-id=`${tour.id}`)
           | Book tour now! (Demo)
       else
         a.btn.btn--green.span-all-rows(href='/login')
