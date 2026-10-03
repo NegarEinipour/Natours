@@ -4,6 +4,7 @@ block append head
   //- Leaflet CSS
   link(rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css')
   //- script(src='/js/mapbox.js')
+  script(src='https://js.stripe.com/v3/')
 
 mixin reviewCard(review)
   .reviews__card
@@ -105,9 +106,12 @@ block content
       h2.heading-secondary What are you waiting for?
       p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
       
-      //- ✅ Correct: Same level as the paragraph (not indented under it)
+      //-  Correct: Same level as the paragraph (not indented under it)
       if user
-        a.btn.btn--green.span-all-rows(href=`/api/v1/bookings/checkout-session/${tour.id}`)
+        a.btn.btn--green.span-all-rows#book-tour(
+          data-tour-id=`${tour.id}`
+          href=`/api/v1/bookings/checkout-session/${tour.id}`
+        )
           | Book tour now! (Demo)
       else
         a.btn.btn--green.span-all-rows(href='/login')

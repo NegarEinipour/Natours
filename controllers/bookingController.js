@@ -1,5 +1,5 @@
 // controllers/bookingController.js
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Tour = require("../models/tourModel");
 const Booking = require("../models/fakeBookingModel");
 const catchAsync = require("../utils/catchAsync");
@@ -7,6 +7,7 @@ const AppError = require("../utils/appError");
 
 //CHECKOUT SESSION
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   if (!tour) {

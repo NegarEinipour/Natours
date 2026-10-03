@@ -9,7 +9,7 @@ router.use(authController.protect); // all booking routes require login
 router.use(authController.protect);
 router.get(
   "/checkout-session/:tourId",
-  authController.restrictTo("user"), // 👈 403 if role isn't 'user'
+  authController.restrictTo("user"),
   bookingController.getCheckoutSession,
 );
 
