@@ -34,13 +34,25 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", "https:", "data:"],
         imgSrc: ["'self'", "data:", "http:", "https:"],
-        scriptSrc: ["'self'", "https:"],
+        scriptSrc: [
+          "'self'",
+          "https:",
+          "https://js.stripe.com", // Stripe.js
+        ],
         styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+        frameSrc: [
+          "'self'",
+          "https://js.stripe.com",
+          "https://hooks.stripe.com",
+        ],
         connectSrc: [
           "'self'",
           "ws:",
           "wss:",
+          "https://api.stripe.com",
           "https://*.tile.openstreetmap.org",
           "https://cdn.jsdelivr.net",
           "http://localhost:3000",
@@ -48,9 +60,10 @@ app.use(
         ],
       },
     },
+    crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" }, //
   }),
 );
-
 // DEVELOPMENT LOGGING
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
