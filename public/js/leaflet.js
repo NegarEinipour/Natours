@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     className: "bw-map",
+    referrerPolicy: "strict-origin-when-cross-origin",
   }).addTo(map);
 
   const greenIcon = L.divIcon({

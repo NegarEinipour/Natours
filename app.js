@@ -16,7 +16,8 @@ const viewRouter = require("./routes/viewRoutes");
 const userRouter = require("./routes/usersRoutes");
 const tourRouter = require("./routes/tourRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
-const bookingRouter = require("./routes/fakeBookingRoutes");
+// const fakeBookingRouter = require("./routes/fakeBookingRoutes");
+const bookingRouter = require("./routes/bookingRoutes");
 
 const app = express();
 
