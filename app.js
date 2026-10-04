@@ -16,8 +16,8 @@ const viewRouter = require("./routes/viewRoutes");
 const userRouter = require("./routes/usersRoutes");
 const tourRouter = require("./routes/tourRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
-// const fakeBookingRouter = require("./routes/fakeBookingRoutes");
 const bookingRouter = require("./routes/bookingRoutes");
+const bookingController = require("./controllers/bookingController"); // 👈 ADDED
 
 const app = express();
 
@@ -37,11 +37,7 @@ app.use(
         baseUri: ["'self'"],
         fontSrc: ["'self'", "https:", "data:"],
         imgSrc: ["'self'", "data:", "http:", "https:"],
-        scriptSrc: [
-          "'self'",
-          "https:",
-          "https://js.stripe.com", // Stripe.js
-        ],
+        scriptSrc: ["'self'", "https:", "https://js.stripe.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https:"],
         frameSrc: [
           "'self'",
@@ -61,9 +57,10 @@ app.use(
       },
     },
     crossOriginEmbedderPolicy: false,
-    referrerPolicy: { policy: "strict-origin-when-cross-origin" }, //
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   }),
 );
+
 // DEVELOPMENT LOGGING
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -76,6 +73,13 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, try again in an hour",
 });
 app.use("/api", limiter);
+
+// 🚨 WEBHOOK ROUTE — MUST COME BEFORE express.json()
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  bookingController.webhookCheckout,
+);
 
 // BODY PARSERS
 app.use(express.json({ limit: "10kb" }));
@@ -102,7 +106,7 @@ app.use(
   }),
 );
 
-//COMRESSION
+// COMPRESSION
 app.use(compression());
 
 // REQUEST TIMESTAMP
