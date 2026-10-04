@@ -49,21 +49,13 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
 // WEBHOOK — creates booking when Stripe confirms payment
 const createBookingCheckout = async (session) => {
-  console.log("🎯 Webhook fired. session:", {
-    tour: session.client_reference_id,
-    email: session.customer_email,
-    amount: session.amount_total,
-  });
-
   const tour = session.client_reference_id;
   const user = await User.findOne({ email: session.customer_email });
-  console.log("👤 User found:", user ? user.email : "NOT FOUND");
 
   if (!user) throw new Error(`No user with email ${session.customer_email}`);
 
   const price = session.amount_total / 100;
   const booking = await Booking.create({ tour, user: user.id, price });
-  console.log("✅ Booking created:", booking._id);
 };
 
 exports.webhookCheckout = async (req, res, next) => {
