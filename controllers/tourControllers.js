@@ -1,3 +1,4 @@
+// controllers/tourController.js
 const Tour = require("../models/tourModel");
 const APIFeatures = require("./../utils/apiFeatures");
 const catchAsync = require("./../utils/catchAsync");
@@ -5,6 +6,13 @@ const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
 const multer = require("multer");
 const sharp = require("sharp");
+const { createClient } = require("@supabase/supabase-js");
+
+// SUPABASE CLIENT
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY,
+);
 
 // MULTER CONFIGURATION
 const multerStorage = multer.memoryStorage();
@@ -27,30 +35,55 @@ exports.uploadTourImages = upload.fields([
   { name: "images", maxCount: 3 },
 ]);
 
-// RESIZE TOUR IMAGES
-exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  if (!req.files.imageCover || !req.files.images) return next();
-
-  // Cover image
-  const imageCoverFilename = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
+// HELPER: process + upload one image
+const processAndUpload = async (buffer, filename, width, height) => {
+  // 1) Resize + convert to JPEG in memory
+  const processedBuffer = await sharp(buffer)
+    .resize(width, height)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`public/img/tours/${imageCoverFilename}`);
-  req.body.imageCover = imageCoverFilename;
+    .toBuffer();
 
-  // Gallery images
+  // 2) Upload to Supabase Storage
+  const { error } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET)
+    .upload(filename, processedBuffer, {
+      contentType: "image/jpeg",
+      upsert: false,
+    });
+
+  if (error) {
+    throw new AppError(`Supabase upload failed: ${error.message}`, 500);
+  }
+
+  // 3) Return the public URL
+  const { data } = supabase.storage
+    .from(process.env.SUPABASE_BUCKET)
+    .getPublicUrl(filename);
+
+  return data.publicUrl;
+};
+
+// RESIZE + UPLOAD TOUR IMAGES
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files || !req.files.imageCover || !req.files.images) return next();
+
+  // 1) Cover image
+  const coverFilename = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+  req.body.imageCover = await processAndUpload(
+    req.files.imageCover[0].buffer,
+    coverFilename,
+    2000,
+    1333,
+  );
+
+  // 2) Gallery images
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, i) => {
       const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/tours/${filename}`);
-      req.body.images.push(filename);
+      const url = await processAndUpload(file.buffer, filename, 2000, 1333);
+      req.body.images.push(url);
     }),
   );
 
@@ -73,7 +106,7 @@ exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 // TOUR STATS
-exports.getToursStats = catchAsync(async (req, res) => {
+exports.getToursStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     { $match: { ratingsAverage: { $gte: 4.5 } } },
     {
@@ -98,7 +131,7 @@ exports.getToursStats = catchAsync(async (req, res) => {
 });
 
 // MONTHLY PLAN
-exports.getMonthlyPlan = catchAsync(async (req, res) => {
+exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const year = req.params.year * 1;
 
   const plan = await Tour.aggregate([
