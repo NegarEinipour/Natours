@@ -20,6 +20,7 @@ const bookingRouter = require("./routes/bookingRoutes");
 const bookingController = require("./controllers/bookingController"); // 👈 ADDED
 
 const app = express();
+app.set("trust proxy", 1); // Trust the first proxy (Render)
 
 // VIEW ENGINE
 app.set("view engine", "pug");
